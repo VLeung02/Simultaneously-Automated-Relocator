@@ -1,7 +1,7 @@
 // The value for 'accessToken' begins with 'pk...'
 mapboxgl.accessToken = 'pk.eyJ1IjoidmxldW5nMjAiLCJhIjoiY2wwZDN0b2VzMDQ3NTNpcG91djI2N29xcCJ9.JtDhq3_bi7JFVefK-PcgoQ'
 let long = 0;
-var lat;
+var lat = 0;
 var visibility;
 
 navigator.geolocation.getCurrentPosition(successLocation, errorLocation, { enableHighAccuracy: true })
@@ -45,7 +45,7 @@ function setupMap(center) {
       'type': 'symbol',
       'source': 'iss',
       'layout': {
-      'icon-image': 'rocket-15'
+        'icon-image': 'rocket-15'
       }
     });
     // Add the text layer
@@ -55,22 +55,22 @@ function setupMap(center) {
       'type': 'symbol',
       'source': 'iss',
       'layout': {
-      'icon-image': 'custom-marker',
-      'text-field': "I am the ISS",
-      'text-font': [
-      'Open Sans Semibold',
-      'Arial Unicode MS Bold'
-      ],
-      'text-offset': [0, 1.25],
-      'text-anchor': 'top'
+        'icon-image': 'custom-marker',
+        'text-field': "I am the ISS",
+        'text-font': [
+          'Open Sans Semibold',
+          'Arial Unicode MS Bold'
+        ],
+        'text-offset': [0, 1.25],
+        'text-anchor': 'top'
       }
-      });
-  
+    });
+
+
 
     // Update the source from the API every 2 seconds.
     const updateSource = setInterval(async () => {
       const geojson = await getLocation(updateSource);
-      //map.getSource('text-field').setText(geojson);
       map.getSource('iss').setData(geojson);
     }, 2000);
 
@@ -82,14 +82,30 @@ function setupMap(center) {
           { method: 'GET' }
         );
         const { latitude, longitude } = await response.json();
-        // Fly the map to the location.
-        map.flyTo({
-          center: [longitude, latitude],
-          speed: 0.5
-        });
-        long = long + 1;
 
-      
+
+        long = longitude
+        lat = latitude
+
+
+        const popup = new mapboxgl.Popup({ offset: 25 }).setText(
+          "I was the ISS at: " + long + " " + lat
+        );
+
+        const el = document.createElement('div');
+        el.id = 'marker';
+
+        const marker1 = new mapboxgl.Marker()
+          .setLngLat([long, lat])
+          .setPopup(popup)
+          .addTo(map);
+
+        // Fly the map to the location.
+        // map.flyTo({
+        //    center: [longitude, latitude],
+        //     speed: 0.5
+        //   });
+
         // make a marker for each feature and add to the map
         // Return the location of the ISS as GeoJSON.
         return {
