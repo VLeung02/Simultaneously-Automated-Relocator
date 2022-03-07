@@ -6,5 +6,5 @@ Un-scaffolded, barebones JavaScript intro to using MapBox GL JS API for future l
 TODO:
 
 1) Automated clean up of markers
-2) Geofencing
+2) Geofencing to warn current coords if accepted if ISS within x eucleadian distance
 
