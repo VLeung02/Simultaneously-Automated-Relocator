@@ -94,7 +94,7 @@ function setupMap(center) {
 
 
         const popup = new mapboxgl.Popup({ offset: 25 }).setText(
-          "I was the ISS at: " + long + " " + lat
+          "I was the ISS at: " + userlong + " " + userlat
         );
 
         const el = document.createElement('div');
