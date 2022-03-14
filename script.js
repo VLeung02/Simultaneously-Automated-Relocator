@@ -1,13 +1,18 @@
 // The value for 'accessToken' begins with 'pk...'
 mapboxgl.accessToken = 'pk.eyJ1IjoidmxldW5nMjAiLCJhIjoiY2wwZDN0b2VzMDQ3NTNpcG91djI2N29xcCJ9.JtDhq3_bi7JFVefK-PcgoQ'
-let long = 0;
+var long = 0;
 var lat = 0;
 var visibility;
+
+var userlong = 0;
+var userlat = 0;
 
 navigator.geolocation.getCurrentPosition(successLocation, errorLocation, { enableHighAccuracy: true })
 
 function successLocation(position) {
-  setupMap([position.coords.longitude, position.coords.latitude]);
+  setupMap([position.coords.longitude, position.coords.latitude])
+  userlong = position.coords.longitude
+  userlat = position.coords.latitude;
 }
 
 function errorLocation() {
@@ -100,11 +105,6 @@ function setupMap(center) {
           .setPopup(popup)
           .addTo(map);
 
-        // Fly the map to the location.
-        // map.flyTo({
-        //    center: [longitude, latitude],
-        //     speed: 0.5
-        //   });
 
         // make a marker for each feature and add to the map
         // Return the location of the ISS as GeoJSON.
