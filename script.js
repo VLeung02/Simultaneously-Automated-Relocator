@@ -1,7 +1,7 @@
 // The value for 'accessToken' begins with 'pk...'
 mapboxgl.accessToken = 'pk.eyJ1IjoidmxldW5nMjAiLCJhIjoiY2wwZDN0b2VzMDQ3NTNpcG91djI2N29xcCJ9.JtDhq3_bi7JFVefK-PcgoQ'
-var long = 0;
-var lat = 0;
+var long = 0; // global, updated long
+var lat = 0; // global, updated lat
 var visibility;
 
 var userlong = 0;
@@ -13,6 +13,25 @@ function successLocation(position) {
   setupMap([position.coords.longitude, position.coords.latitude])
   userlong = position.coords.longitude
   userlat = position.coords.latitude;
+}
+
+// invoke this everytime in the async, use if state to see diff and use flyto
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
 }
 
 function errorLocation() {
@@ -94,7 +113,7 @@ function setupMap(center) {
 
 
         const popup = new mapboxgl.Popup({ offset: 25 }).setText(
-          "I was the ISS at: " + userlong + " " + userlat
+          "I was the ISS at: " + long + " " + lat
         );
 
         const el = document.createElement('div');
@@ -104,6 +123,13 @@ function setupMap(center) {
           .setLngLat([long, lat])
           .setPopup(popup)
           .addTo(map);
+
+        if (getDistanceFromLatLonInKm(userlong, userlat, long, lat) <= 2500) { // if iss is within 2500km from user, fly to ISS
+            map.flyTo({
+           center: [longitude, latitude],
+            speed: 0.5
+          });
+        }
 
 
         // make a marker for each feature and add to the map
