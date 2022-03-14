@@ -30,6 +30,10 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   return d;
 }
 
+function sleep(ms) { //timeout function to cleanup markers?
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function deg2rad(deg) {
   return deg * (Math.PI/180)
 }
@@ -113,7 +117,7 @@ function setupMap(center) {
 
 
         const popup = new mapboxgl.Popup({ offset: 25 }).setText(
-          "I was the ISS at: " + long + " " + lat
+          "I was the ISS at: " + long + " " + lat + "! Distance from you: " + getDistanceFromLatLonInKm(userlong, userlat, long, lat) + " kilometers"
         );
 
         const el = document.createElement('div');
@@ -124,12 +128,14 @@ function setupMap(center) {
           .setPopup(popup)
           .addTo(map);
 
-        if (getDistanceFromLatLonInKm(userlong, userlat, long, lat) <= 2500) { // if iss is within 2500km from user, fly to ISS
+        if (getDistanceFromLatLonInKm(userlong, userlat, long, lat) <= 3500) { // if iss is within 3500km from user, fly to ISS
             map.flyTo({
            center: [longitude, latitude],
             speed: 0.5
           });
         }
+        //await sleep(3000);
+      //  map.removeLayer(marker1); //!!! not sure how to add cleanup with sleep timer
 
 
         // make a marker for each feature and add to the map
